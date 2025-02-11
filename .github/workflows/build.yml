@@ -144,6 +144,10 @@ jobs:
       with:
         host: arm64-apple-darwin
 
+    - name: 📁 Collect dependencies
+      run: |
+        brew install coreutils
+
     - name: 📁 Collect subpackages
       run: |
         git clone https://github.com/cppp-project/build-aux --depth 1
@@ -180,59 +184,60 @@ jobs:
         tag_name: ${{ steps.rubisco.outputs.tag }}
         files: ./dist/*
 
-  build-windows:
+  # Rubisco cannot been install due to encoding problems on Windows.
+  # build-windows:
 
-    runs-on: windows-latest
+  #   runs-on: windows-latest
 
-    steps:
-    - name: 📁 Checkout
-      uses: actions/checkout@v4
+  #   steps:
+  #   - name: 📁 Checkout
+  #     uses: actions/checkout@v4
 
-    - name: 🧰 Setup Rubisco
-      id: rubisco
-      uses: cppp-project/rubisco@main
-      with:
-        host: x86_64-windows-msvc
+  #   - name: 🧰 Setup Rubisco
+  #     id: rubisco
+  #     uses: cppp-project/rubisco@main
+  #     with:
+  #       host: x86_64-windows-msvc
 
-    - name: 📁 Collect dependencies
-      run: |
-        choco install zip dos2unix mingw -y
+  #   - name: 📁 Collect dependencies
+  #     run: |
+  #       choco install zip dos2unix mingw -y
 
-    - name: 📁 Collect subpackages
-      run: |
-        git clone https://github.com/cppp-project/build-aux --depth 1
-        git clone https://github.com/cppp-project/cppp-platform --depth 1
+  #   - name: 📁 Collect subpackages
+  #     run: |
+  #       git clone https://github.com/cppp-project/build-aux --depth 1
+  #       git clone https://github.com/cppp-project/cppp-platform --depth 1
 
-    - name: 🧳 Prepare for building
-      run: |
-        mkdir -p ${{ steps.rubisco.outputs.pkgname }}-x86_64-windows-msvc
-        mkdir -p dist
+  #   - name: 🧳 Prepare for building
+  #     run: |
+  #       mkdir -p ${{ steps.rubisco.outputs.pkgname }}-x86_64-windows-msvc
+  #       mkdir -p dist
 
-    - name: 🛠️ Build binary distribution
-      run: |
-        mkdir build
-        cd build
-        cmake .. -DBUILD_TESTING=OFF -DICONV_COMPAT=ON -DCMAKE_INSTALL_PREFIX="${{ steps.rubisco.outputs.srcdir }}/${{ steps.rubisco.outputs.pkgname }}-x86_64-windows-msvc"
-        cmake --build . --config=Release -j $(nproc)
-        cmake --install . --config=Release
-        cd ..
+  #   - name: 🛠️ Build binary distribution
+  #     run: |
+  #       mkdir build
+  #       cd build
+  #       cmake .. -DBUILD_TESTING=OFF -DICONV_COMPAT=ON -DCMAKE_INSTALL_PREFIX="${{ steps.rubisco.outputs.srcdir }}/${{ steps.rubisco.outputs.pkgname }}-x86_64-windows-msvc"
+  #       cmake --build . --config=Release -j $(nproc)
+  #       cmake --install . --config=Release
+  #       cd ..
 
-    - name: 📦 Make packages
-      run: |
-        tar cvf dist/${{ steps.rubisco.outputs.pkgname }}-x86_64-windows-msvc.tar ${{ steps.rubisco.outputs.pkgname }}-x86_64-windows-msvc
-        xz -9 dist/${{ steps.rubisco.outputs.pkgname }}-x86_64-windows-msvc.tar
+  #   - name: 📦 Make packages
+  #     run: |
+  #       tar cvf dist/${{ steps.rubisco.outputs.pkgname }}-x86_64-windows-msvc.tar ${{ steps.rubisco.outputs.pkgname }}-x86_64-windows-msvc
+  #       xz -9 dist/${{ steps.rubisco.outputs.pkgname }}-x86_64-windows-msvc.tar
 
-    - name: 📦 Generate checksum
-      run: |
-        cd dist
-          Get-ChildItem | ForEach-Object {
-            sha256sum $_.Name > ($_.Name + ".sha256")
-            dos2unix ($_.Name + ".sha256")
-          }
-        cd ..
+  #   - name: 📦 Generate checksum
+  #     run: |
+  #       cd dist
+  #         Get-ChildItem | ForEach-Object {
+  #           sha256sum $_.Name > ($_.Name + ".sha256")
+  #           dos2unix ($_.Name + ".sha256")
+  #         }
+  #       cd ..
 
-    - name: ⬆️ Create release and upload assets
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ steps.rubisco.outputs.tag }}
-        files: ./dist/*
+  #   - name: ⬆️ Create release and upload assets
+  #     uses: softprops/action-gh-release@v1
+  #     with:
+  #       tag_name: ${{ steps.rubisco.outputs.tag }}
+  #       files: ./dist/*
