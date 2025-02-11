@@ -56,7 +56,7 @@ jobs:
             powerpc64-linux-gnu,
             riscv64-linux-gnu,
             sh4-linux-gnu,
-            x86_64-linux-gnu,
+            x86_64-linux-gnu
           ]
 
     runs-on: ubuntu-latest
@@ -66,6 +66,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: 🧰 Setup Rubisco
+      id: rubisco
       uses: cppp-project/rubisco@main
       with:
         host: ${{ matrix.host }}
