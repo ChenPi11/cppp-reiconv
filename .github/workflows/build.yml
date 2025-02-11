@@ -20,6 +20,11 @@ jobs:
       with:
         host: x86_64-linux-gnu
 
+    - name: 📁 Collect subpackages
+      run: |
+        git clone https://github.com/cppp-project/build-aux --depth 1
+        git clone https://github.com/cppp-project/cppp-platform --depth 1
+
     - name: 📦 Build source distribution
       run: |
         rubisco dist
@@ -81,6 +86,11 @@ jobs:
         else
           sudo apt-get install gcc-${{ matrix.host }} g++-${{ matrix.host }} -y ;
         fi
+
+    - name: 📁 Collect subpackages
+      run: |
+        git clone https://github.com/cppp-project/build-aux --depth 1
+        git clone https://github.com/cppp-project/cppp-platform --depth 1
 
     - name: 🧳 Prepare for building
       run: |
