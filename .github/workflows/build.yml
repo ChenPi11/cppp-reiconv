@@ -96,7 +96,7 @@ jobs:
       run: |
         mkdir -p ${{ steps.rubisco.outputs.pkgname }}-${{ matrix.host }}
         mkdir -p dist
-    
+
     - name: 🛠️ Build binary distribution
       run: |
         export C_COMPILER="gcc"
@@ -108,7 +108,7 @@ jobs:
 
         mkdir build
         cd build
-        cmake .. -DCMAKE_INSTALL_PREFIX="${{ steps.rubisco.outputs.srcdir }}/${{ steps.rubisco.outputs.pkgname }}-${{ matrix.host }}" -DCMAKE_C_COMPILER=$CC_CROSS -DCMAKE_CXX_COMPILER=$CXX_CROSS -DCMAKE_LINKER=$LD
+        cmake .. -DBUILD_TESTING=OFF -DICONV_COMPAT=OFF -DCMAKE_INSTALL_PREFIX="${{ steps.rubisco.outputs.srcdir }}/${{ steps.rubisco.outputs.pkgname }}-${{ matrix.host }}" -DCMAKE_C_COMPILER=$CC_CROSS -DCMAKE_CXX_COMPILER=$CXX_CROSS -DCMAKE_LINKER=$LD
         cmake --build . --config=Release -j $(nproc)
         cmake --install . --config=Release
         cd ..
